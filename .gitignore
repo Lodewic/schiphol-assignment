@@ -79,6 +79,7 @@ target/
 /data/
 /lvt-schiphol-assignment-snakemake/
 /.snakemake/
+/keys/
 
 # Mac OS-specific storage files
 .DS_Store
