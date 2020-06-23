@@ -1,0 +1,22 @@
+name: schiphol-tf
+channels:
+  - defaults
+  - conda-forge
+dependencies:
+  - python=3.7
+  - tensorflow
+  - tqdm
+  - matplotlib
+  - seaborn
+  - plotly
+  - colorlover
+  - google-cloud-storage
+  - gcsfs
+  - ipykernel
+  - pip
+  - python-dotenv
+  - pip:
+    - jupyter_contrib_nbextensions
+    - tensorflow
+    - tensorflow-probability
+    # - any_other_packages

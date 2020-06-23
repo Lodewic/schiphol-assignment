@@ -1,0 +1,7 @@
+name: schiphol-r
+channels:
+  - defaults
+dependencies:
+  - r-base
+  - r-essentials
+  - r-irkernel

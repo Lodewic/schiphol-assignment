@@ -1,0 +1,32 @@
+rule pipeline_sklearn:
+	input:
+		data=GS.remote("knsb-times-data/model_input/target/minimal_model_input.csv"),
+		tsfresh=GS.remote("knsb-times-data/model_input/features/tsfresh__window={window}.csv"),
+		personal=GS.remote("knsb-times-data/model_input/features/personal_features.csv")
+	output:
+		cv_results=GS.remote("knsb-times-data/pipeline_output/pipeline={pipeline_model}__target={target}__window={window}/cv_results.csv"),
+		pipeline=GS.remote("knsb-times-data/pipeline_output/pipeline={pipeline_model}__target={target}__window={window}/pipeline.pkl"),
+	log:
+		notebook=report("knsb-times-data/pipeline_output/pipeline={pipeline_model}__target={target}__window={window}/pipeline__sklearn_THS.ipynb")
+	threads: 4
+	params:
+		input_notebook=lambda wildcards: f"scripts/pipelines/pipeline__sklearn_{wildcards.pipeline_model}.ipynb",
+		credentials="keys/data-access.json",
+		mlflow_credentials=config["mlflow"]["credentials"],
+		mlflow_server=config["mlflow"]["server"],
+		mlflow_experiment=config["mlflow"]["pipeline_experiment"],
+		run_suffix=lambda wildcards: "_".join([wildcards.window, wildcards.target])
+	shell:
+		"papermill {params.input_notebook} {log.notebook} "
+        "-k knsb-times --inject-paths "
+        "-p tsfresh_features {input.tsfresh} "
+        "-p personal_features {input.personal} "
+        "-p prediction_target {wildcards.target} "
+        "-p output_cv_results {output.cv_results} "
+        "-p pipeline_pickle {output.pipeline} "
+        "-p credentials {params.credentials} "
+        "-p mlflow_credentials {params.mlflow_credentials} "
+        "-p mlflow_server {params.mlflow_server} "
+        "-p mlflow_experiment {params.mlflow_experiment} "
+        "-p run_suffix {params.run_suffix} "
+        "-p n_jobs {threads} "

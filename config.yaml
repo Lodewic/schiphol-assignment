@@ -1,0 +1,18 @@
+# config used for Snakemake 
+
+
+remote: true
+
+gcloud:
+    bucket: lvt-schiphol-assignment-snakemake
+    credentials: "keys/bucket-access.json"
+
+
+mlflow:
+    credentials: "keys/mlflow-access.json"
+    server: "http://35.204.210.2:5000"
+    pipeline_experiment: "sklearn_pipeline__snakemake"
+
+raw_files:
+    - "flights.csv"
+    - "airports.csv"

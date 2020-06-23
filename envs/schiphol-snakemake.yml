@@ -1,0 +1,21 @@
+name: schiphol-snakemake
+channels:
+  - defaults
+  - conda-forge
+  - bioconda
+  - alubbock
+dependencies:
+  - python
+  - matplotlib
+  - pygraphviz
+  - snakemake
+  - google-cloud-storage
+  - ipykernel
+  - gcsfs
+  - pip
+  - pip:
+    - papermill
+    - jupyter_contrib_nbextensions
+    - networkx
+    - pandas_schema
+    # - any_other_packages

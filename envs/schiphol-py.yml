@@ -1,0 +1,28 @@
+name: schiphol-py
+channels:
+  - defaults
+  - conda-forge
+  - bioconda
+dependencies:
+  - python=3.7
+  - tensorflow
+  - tqdm
+  - numpy
+  - matplotlib
+  - seaborn
+  - plotly
+  - colorlover
+  - scikit-learn
+  - google-cloud-storage
+  - gcsfs
+  - ipykernel
+  - pip
+  - python-dotenv
+  - pandas-profiling
+  - pip:
+    - jupyter_contrib_nbextensions
+    - tsfresh
+    - catboost
+    - xgboost
+    - mlflow
+    # - any_other_packages
