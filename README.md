@@ -3,6 +3,64 @@ Schiphol-Code-Assignment
 
 Code assignment for Schiphol position
 
+## Environment setup
+
+For local development we use multiple conda environments because they play nice with `papermill` without having to deal with conflicts between packages as much.
+
+```
+conda env create -f ./envs/schiphol-snakemake.yml
+conda env create -f ./envs/schiphol-py.yml
+conda env create -f ./envs/schiphol-r.yml
+conda env create -f ./envs/schiphol-tf.yml
+
+conda deactivate
+conda activate schiphol-snakemake
+python -m ipykernel install --user --name schiphol-snakemake --display-name "Python (schiphol-snakemake)"
+conda deactivate
+
+conda deactivate
+conda activate schiphol-py
+python -m ipykernel install --user --name schiphol-py --display-name "Python (schiphol-py)"
+conda deactivate
+
+conda deactivate
+conda activate schiphol-r
+python -m ipykernel install --user --name schiphol-r --display-name "Python (schiphol-r)"
+conda deactivate
+
+conda deactivate
+conda activate schiphol-tf
+python -m ipykernel install --user --name schiphol-tf --display-name "Python (schiphol-tf)"
+conda deactivate
+```
+
+## Connecting to Google cloud storage
+
+Connect to Google cloud storage so that we can create a key for the service-account that has access to the
+Google cloud storage buckets. You can create a key either from the [GCP console](https://console.cloud.google.com/) or through the command line.
+
+### Console
+
+TODO
+
+### Command line
+
+To use the command line, first [install the Google cloud SDK](https://cloud.google.com/sdk/docs/#install_the_latest_cloud_tools_version_cloudsdk_current_version) so that you can use `gcloud` commands.
+
+Make sure the right account is activated, one way to do so is just logging in again.
+Then also set the active project, just to be sure.
+
+Then, if you don't have one already, create a service-account key and save it to `keys/bucket-access.json`. Using the same name for the .json file
+ensures that our code will run the same for everyone.
+
+```
+conda activate schiphol-snakemake
+gcloud auth login
+gcloud config set project schiphol-assignment
+gcloud iam service-accounts keys create keys/bucket-access.json --iam-account bucket-acces@schiphol-assignment.iam.gserviceaccount.com
+```
+
+
 Project Organization
 ------------
 
