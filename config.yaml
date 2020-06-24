@@ -1,7 +1,7 @@
 # config used for Snakemake 
 
 
-remote: true
+remote: false
 
 gcloud:
     bucket: lvt-schiphol-assignment-snakemake
@@ -16,3 +16,11 @@ mlflow:
 raw_files:
     - "flights.csv"
     - "airports.csv"
+
+
+train_test:
+    test_size:
+        - 0.2
+    strategy:
+        - sample
+        - timeseries
