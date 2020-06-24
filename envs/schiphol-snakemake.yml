@@ -5,17 +5,19 @@ channels:
   - bioconda
   - alubbock
 dependencies:
-  - python
+  - python=3.7
   - matplotlib
   - pygraphviz
-  - snakemake
   - google-cloud-storage
   - ipykernel
   - gcsfs
+  - crc32c
   - pip
   - pip:
+    - git+https://github.com/Lodewic/snakemake.git
     - papermill
     - jupyter_contrib_nbextensions
     - networkx
-    - pandas_schema
+    - jinja2 
+    - pygments
     # - any_other_packages

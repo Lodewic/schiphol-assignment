@@ -5,7 +5,6 @@ channels:
   - bioconda
 dependencies:
   - python=3.7
-  - tensorflow
   - tqdm
   - numpy
   - matplotlib
