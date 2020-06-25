@@ -16,3 +16,16 @@ mlflow:
 raw_files:
     - "flights.csv"
     - "airports.csv"
+
+
+train_test:
+    test_size:
+        - 0.2
+    strategy:
+        - sample
+        - timeseries
+
+
+models:
+  - baseline_average
+  - catboost_simple
