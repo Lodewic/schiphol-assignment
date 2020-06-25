@@ -1,7 +1,7 @@
 # config used for Snakemake 
 
 
-remote: false
+remote: true
 
 gcloud:
     bucket: lvt-schiphol-assignment-snakemake
@@ -24,3 +24,8 @@ train_test:
     strategy:
         - sample
         - timeseries
+
+
+models:
+  - baseline_average
+  - catboost_simple

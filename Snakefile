@@ -41,6 +41,15 @@ train_test_sets = expand("{bucket}/data/model_input/train_test__{test_size}__{st
 						 test_size = config['train_test']['test_size'],
 						 strategy = config['train_test']['strategy'])
 train_test_sets = make_files_remote(train_test_sets)
+
+
+model_predictions = expand("{bucket}/data/model_output/{model}__{test_size}__{strategy}/predictions.csv",
+							bucket = BUCKET,
+							model = config['models'],
+							test_size = config['train_test']['test_size'],
+							strategy = config['train_test']['strategy'])
+
+model_predictions = make_files_remote(model_predictions)
 # the 'all' rule defines only the target files that you want to generate - as input the the 'all' rule
 ## Comment out files that you want to ignore
 rule all:
@@ -49,8 +58,18 @@ rule all:
     	# Remote(f"{BUCKET}/data/model_input/features/route_destinations.csv"),
     	# Remote(f"{BUCKET}/data/model_input/delays_base_input.csv"),
     	# Remote(f"{BUCKET}/data/model_input/features/schedule_time_features.csv")
-    	Remote(f"{BUCKET}/data/model_input/delays_extended_input.csv"),
-    	train_test_sets
+    	# Remote(f"{BUCKET}/data/model_input/delays_extended_input.csv"),
+    	# train_test_sets,
+    	model_predictions
+
+
+rule flights:
+	output:
+		Remote(f"{BUCKET}/data/raw/flights.csv")
+
+rule airports:
+	output:
+		Remote(f"{BUCKET}/data/raw/airports.csv")
 
 
 rule create_pandas_profiling:
@@ -160,7 +179,7 @@ rule train_test_split:
 	output:
 		data = Remote("{bucket}/data/model_input/train_test__{test_size}__{strategy}.csv")
 	log:
-		notebook = report(Remote("{bucket}/data/model_input/preprocess__train_test_split{test_size}__{strategy}.ipynb"),
+		notebook = report(Remote("{bucket}/data/model_input/preprocess__train_test_split_{test_size}__{strategy}.ipynb"),
 								category="logs")
 	params:
 		env="schiphol-py"
@@ -171,3 +190,43 @@ rule train_test_split:
 		"-p output_file \"{output.data}\" "
 		"-p test_size {wildcards.test_size} "
 		"-p strategy {wildcards.strategy} "
+
+
+rule model__baseline_average:
+	input:
+		data = Remote("{bucket}/data/model_input/delays_extended_input.csv"),
+		train_test = Remote("{bucket}/data/model_input/train_test__{test_size}__{strategy}.csv"),
+		notebook = "scripts/model__baseline_average.ipynb"
+	output:
+		predictions = Remote("{bucket}/data/model_output/baseline_average__{test_size}__{strategy}/predictions.csv")
+	log:
+		notebook = report(Remote("{bucket}/data/model_output/baseline_average__{test_size}__{strategy}/model__baseline_average.ipynb"),
+								category="logs")
+	params:
+		env="schiphol-py"
+	shell: 
+		"papermill {input.notebook} \"{log.notebook}\" "
+		"-k {params.env} --inject-paths "
+		"-p input_file \"{input.data}\" "
+		"-p train_test_file \"{input.train_test}\" "
+		"-p output_predictions \"{output.predictions}\""
+
+
+rule model__catboost_simple:
+	input:
+		data = Remote("{bucket}/data/model_input/delays_extended_input.csv"),
+		train_test = Remote("{bucket}/data/model_input/train_test__{test_size}__{strategy}.csv"),
+		notebook = "scripts/model__catboost_simple.ipynb"
+	output:
+		predictions = Remote("{bucket}/data/model_output/catboost_simple__{test_size}__{strategy}/predictions.csv")
+	log:
+		notebook = report(Remote("{bucket}/data/model_output/catboost_simple__{test_size}__{strategy}/model__catboost_simple.ipynb"),
+								category="logs")
+	params:
+		env="schiphol-py"
+	shell: 
+		"papermill {input.notebook} \"{log.notebook}\" "
+		"-k {params.env} --inject-paths "
+		"-p input_file \"{input.data}\" "
+		"-p train_test_file \"{input.train_test}\" "
+		"-p output_predictions \"{output.predictions}\""
