@@ -6,16 +6,39 @@
 Schiphol-Code-Assignment documentation!
 ==============================================
 
+.. toctree::
+   :hidden:
+   
+    Home <self>
+
 Contents:
 
 .. toctree::
    :maxdepth: 2
 
    getting-started
-   commands
+    
 
+Papermill scripts
+===========
 
+.. toctree::
+   :maxdepth: 2
+   :titlesonly:
 
+   environment_setup
+   explore__pandas_profiling
+   
+   
+Model scripts
+===========
+
+.. toctree::
+   :maxdepth: 3
+   
+    model__catboost_simple
+    
+    
 Indices and tables
 ==================
 
