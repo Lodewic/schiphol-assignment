@@ -60,7 +60,9 @@ rule all:
     	# Remote(f"{BUCKET}/data/model_input/features/schedule_time_features.csv")
     	# Remote(f"{BUCKET}/data/model_input/delays_extended_input.csv"),
     	# train_test_sets,
-    	model_predictions
+    	model_predictions,
+    	Remote(f"{BUCKET}/data/model_input/features/rolling_mean_delay__10T__1D+1H+2H+6H.csv"),
+    	"docs/_build/html/index.html"
 
 
 rule flights:
@@ -131,7 +133,7 @@ rule feature__route_destinations:
 
 rule feature__schedule_time_features:
 	input:
-		data=Remote("{bucket}/data/model_input/delays_base_input.csv"),
+		data=Remote("{bucket}/data//raw/flights.csv"),
 		notebook="scripts/feature__time_features_from_datetime.ipynb"
 	output: 
 		data=Remote("{bucket}/data/model_input/features/schedule_time_features.csv")
@@ -149,6 +151,27 @@ rule feature__schedule_time_features:
 		"-p output_file \"{output.data}\" "
 		"-p dt_column \"{params.dt_column}\" "
 		"-p id_column \"{params.id_column}\" "
+
+
+rule feature__rolling_mean_delay:
+	input:
+		data=Remote("{bucket}/data/model_input/delays_base_input.csv"),
+		notebook="scripts/feature__rolling_mean_delay.ipynb"
+	output: 
+		data=Remote("{bucket}/data/model_input/features/rolling_mean_delay__{freq}__{window}.csv")
+	log:
+		notebook=report(Remote("{bucket}/data/model_input/features/feature__rolling_mean_delay__{freq}__{window}.ipynb"),
+							category="logs")
+	params:
+		env="schiphol-py",
+	shell: 
+		"papermill {input.notebook} \"{log.notebook}\" "
+		"-k {params.env} --inject-paths "
+		"-p input_file \"{input.data}\" "
+		"-p output_file \"{output.data}\" "
+		"-p freq \"{wildcards.freq}\" "
+		"-p window \"{wildcards.window}\" "
+
 
 
 rule preprocess__extend_base_with_features:
@@ -230,3 +253,22 @@ rule model__catboost_simple:
 		"-p input_file \"{input.data}\" "
 		"-p train_test_file \"{input.train_test}\" "
 		"-p output_predictions \"{output.predictions}\""
+
+rule move_script_to_docs:
+	input:
+		"scripts/{file}.ipynb"
+	output:
+		"docs/{file}.ipynb"
+	shell:
+		"mv {input} {output}"
+
+rule make_docs:
+	input:
+		"docs/index.rst",
+		"docs/conf.py",
+		"docs/explore__pandas_profiling.ipynb",
+		"docs/model__catboost_simple.ipynb"
+	output:
+		"docs/_build/html/index.html",
+	shell:
+		"cd docs && make html"
