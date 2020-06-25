@@ -1,6 +1,10 @@
 Schiphol-Code-Assignment
 ==============================
 
+Docs: https://schiphol-assignment.readthedocs.io/en/latest/
+
+[![Documentation Status](https://readthedocs.org/projects/schiphol-assignment/badge/?version=latest)](https://schiphol-assignment.readthedocs.io/en/latest/?badge=latest)
+
 Code assignment for Schiphol position
 
 ## Environment setup
