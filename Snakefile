@@ -260,7 +260,7 @@ rule move_script_to_docs:
 	output:
 		"docs/{file}.ipynb"
 	shell:
-		"mv {input} {output}"
+		"cp {input} {output}"
 
 rule make_docs:
 	input:
