@@ -14,16 +14,16 @@ Schiphol-Code-Assignment documentation!
 Contents:
 
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 3
 
-   getting-started
+   Summary
     
 
 Papermill scripts
 ===========
 
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 3
 
    environment_setup
    explore__pandas_profiling
