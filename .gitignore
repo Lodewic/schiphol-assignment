@@ -52,7 +52,6 @@ coverage.xml
 
 # Sphinx documentation
 docs/_build/
-docs/_static/
 docs/_templates/
 
 # PyBuilder
@@ -82,6 +81,7 @@ target/
 /lvt-schiphol-assignment-snakemake/
 /.snakemake/
 /keys/
+/test_output/
 
 # Mac OS-specific storage files
 .DS_Store
