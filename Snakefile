@@ -110,6 +110,7 @@ rule create_pandas_profiling:
 		"-k {params.env} --inject-paths "
 		"-p input_file \"{input.data}\" "
 		"-p output_file \"{output.html_report}\" "
+		"-p profiling_config \"scripts/profiling_config.yml\""
 
 ### Create base model input ###
 
