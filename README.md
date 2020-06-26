@@ -18,7 +18,7 @@ Code assignment for Schiphol position
 
 
 
-## Environment setup
+## Local environment setup
 
 For local development we use multiple conda environments because they play nice with `papermill` without having to deal with conflicts between packages as much.
 
@@ -48,6 +48,41 @@ conda activate schiphol-tf
 python -m ipykernel install --user --name schiphol-tf --display-name "Python (schiphol-tf)"
 conda deactivate
 ```
+
+## Docker setup
+
+The whole workflow is designed to work in a docker container so that we can deploy it on a larger machine in the future.
+This also allows us to test whether development on Windows caused any issues, which I can tell it definitely did.
+
+### Build container
+
+```
+docker build -t schiphol .
+```
+
+### Run container
+
+To run the Snakemake pipeline you will need write-access to the storage bucket. Unless mistakes were made you will not find the credentials here,
+so ask them from me (Lodewic) if you want to run it.
+
+The container itself contains none of the pipeline code, only its dependencies. The result is that we only need to rebuild the container if any of the
+conda dependencies change, otherwise the container is static. So run our own code we mount the whole directory instead,
+
+Note, this will run the whole pipeline depending on your local `./snakemake` directory which contains any metadata of your last pipeline run. Because this
+folder is .gitignored you'll find that each new machine considers all files outdated and therefore re-runs the whole pipeline always. That is why, for production, 
+this container would run on a container in the cloud where the `./snakemake` folder is used as the ground-truth of the pipeline state. When changes are made to the code,
+we would have to push the code to this VM.
+
+```
+docker run ${pwd}:/project schiphol
+```
+
+Or if you want to control the commands yourself, get in there with bash,
+
+```
+docker run ${pwd}:/project -it schiphol bash
+```
+
 
 ## Connecting to Google cloud storage
 
@@ -79,16 +114,11 @@ gcloud iam service-accounts keys create keys/bucket-access.json --iam-account bu
 Project Organization
 ------------
 
-    ├── LICENSE
-    ├── Makefile           <- Makefile with commands like `make data` or `make train`
     ├── README.md          <- The top-level README for developers using this project.
     ├── data
-    │   ├── external       <- Data from third party sources.
-    │   ├── interim        <- Intermediate data that has been transformed.
-    │   ├── processed      <- The final, canonical data sets for modeling.
-    │   └── raw            <- The original, immutable data dump.
+    │   └── raw            <- The original, immutable data dump. If small enough included in version control.
     │
-    ├── docs               <- A default Sphinx project; see sphinx-doc.org for details
+    ├── docs               <- A Sphinx project including nbsphinx to render notebooks; see sphinx-doc.org for details
     │
     ├── models             <- Trained and serialized models, model predictions, or model summaries
     │
@@ -96,23 +126,21 @@ Project Organization
     │                         the creator's initials, and a short `-` delimited description, e.g.
     │                         `1.0-jqp-initial-data-exploration`.
     │
-    ├── references         <- Data dictionaries, manuals, and all other explanatory materials.
+    ├── references         <- Assignment pdf, data dictionaries, manuals, and all other explanatory materials.
     │
     ├── reports            <- Generated analysis as HTML, PDF, LaTeX, etc.
     │   └── figures        <- Generated graphics and figures to be used in reporting
-    │
-    ├── requirements.txt   <- The requirements file for reproducing the analysis environment, e.g.
-    │                         generated with `pip freeze > requirements.txt`
-    │
-    ├── setup.py           <- makes project pip installable (pip install -e .) so src can be imported
+    |
     ├── src                <- Source code for use in this project.
     │   ├── __init__.py    <- Makes src a Python module
     │   │
-    │   ├── data           <- Scripts to download or generate data
-    │   │   └── make_dataset.py
+    │   ├── data           <- data utility functions
+    │   │   └── google_storage_io.py
     │   │
-    │   ├── features       <- Scripts to turn raw data into features for modeling
-    │   │   └── build_features.py
+    │   ├── evaluation       <- Model performance evaluation utilities
+    │   │   ├── metrics.py
+    │   │   ├── predictions.py
+    │   │   └── regression.py
     │   │
     │   ├── models         <- Scripts to train models and then use trained models to make
     │   │   │                 predictions
