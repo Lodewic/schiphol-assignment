@@ -10,33 +10,45 @@ Schiphol-Code-Assignment documentation!
    :hidden:
    
     Home <self>
-
+    
 Contents:
 
 .. toctree::
    :maxdepth: 3
 
    Summary
+   scripts/environment_setup
+   scripts/explore__pandas_profiling
     
 
+Preprocessing scripts
+=================
+
+.. toctree::
+   :maxdepth: 3
+   :caption: Papermill scripts
+
+   
+   
+   scripts/preprocess__base_model_input
+   scripts/preprocess__extend_base_with_features
+   scripts/preprocess__train_test_split.ipynb
+   
 Papermill scripts
-===========
+=================
 
 .. toctree::
    :maxdepth: 3
-
-   environment_setup
-   explore__pandas_profiling
+   :caption: Feature scripts
+   
+   scripts/feature__time_features_from_datetime
+   scripts/feature__route_destinations
+   scripts/feature__rolling_mean_delay
+   scripts/feature__holidays_from_RijksOverheid
+   scripts/model__baseline_average
+   scripts/model__catboost_simple
    
    
-Model scripts
-===========
-
-.. toctree::
-   :maxdepth: 3
-   
-    model__catboost_simple
-    
     
 Indices and tables
 ==================
@@ -44,3 +56,5 @@ Indices and tables
 * :ref:`genindex`
 * :ref:`modindex`
 * :ref:`search`
+
+
