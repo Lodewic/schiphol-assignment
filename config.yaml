@@ -4,19 +4,21 @@
 remote: true
 
 gcloud:
-    bucket: lvt-schiphol-assignment-snakemake
+    bucket: "lvt-schiphol-assignment-snakemake"
     credentials: "keys/bucket-access.json"
 
 
 mlflow:
-    credentials: "keys/mlflow-access.json"
-    server: "http://35.204.210.2:5000"
-    pipeline_experiment: "sklearn_pipeline__snakemake"
+    experiment: "schiphol-snakemake"
+    tracking_uri: "lvt-schiphol-assignment-snakemake/mlruns"
 
 raw_files:
     - "flights.csv"
     - "airports.csv"
 
+
+trelliscope:
+    path: "trelliscope"
 
 train_test:
     test_size:
@@ -28,4 +30,4 @@ train_test:
 
 models:
   - baseline_average
-  - catboost_simple
+  # - catboost_simple

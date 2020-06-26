@@ -67,16 +67,18 @@ model_predictions = expand("{bucket}/data/model_output/{model}__{test_size}__{st
 model_predictions = make_files_remote(model_predictions)
 
 
+# TRELLISCOPE RULE BROKEN - MUST RUN IT MANUALLY :(
+trelliscope_displays = [
+	f"{BUCKET}/{config['trelliscope']['path']}/appfiles/displays/common/Delays_Type_Airline/displayObj.jsonp",
+	f"{BUCKET}/{config['trelliscope']['path']}/appfiles/displays/common/Delays_Type_Airline/displayObj.jsonp"]
+trelliscope_displays = make_files_remote(trelliscope_displays)                                                    
+
+
 # the 'all' rule defines only the target files that you want to generate - as input the the 'all' rule
 ## Comment out files that you want to ignore or add those you want to create
 rule all:
     input:
     	profiling_reports,
-    	# Remote(f"{BUCKET}/data/model_input/features/route_destinations.csv"),
-    	# Remote(f"{BUCKET}/data/model_input/delays_base_input.csv"),
-    	# Remote(f"{BUCKET}/data/model_input/features/schedule_time_features.csv")
-    	# Remote(f"{BUCKET}/data/model_input/delays_extended_input.csv"),
-    	# train_test_sets,
     	model_predictions,
     	Remote(f"{BUCKET}/data/model_input/features/rolling_mean_delay__10T__1D+1H+2H+6H.csv"),
     	"docs/_build/html/index.html"
@@ -250,13 +252,20 @@ rule model__baseline_average:
 		notebook = report(Remote("{bucket}/data/model_output/baseline_average__{test_size}__{strategy}/model__baseline_average.ipynb"),
 								category="logs")
 	params:
-		env="schiphol-py"
+		env="schiphol-py",
+		mlflow_experiment = config["mlflow"]["experiment"],
+		mlflow_uri = config["mlflow"]["tracking_uri"],
+		mlflow_run = "catboost_simple__{test_size}_{strategy}"
 	shell: 
 		"papermill {input.notebook} \"{log.notebook}\" "
 		"-k {params.env} --inject-paths "
 		"-p input_file \"{input.data}\" "
 		"-p train_test_file \"{input.train_test}\" "
-		"-p output_predictions \"{output.predictions}\""
+		"-p output_predictions \"{output.predictions}\" "
+		"-p mlflow_tracking_uri \"{params.mlflow_uri}\" "
+		"-p mlflow_experiment \"{params.mlflow_experiment}\" "
+		"-p mlflow_run \"{params.mlflow_run}\" "
+
 
 
 rule model__catboost_simple:
@@ -269,14 +278,48 @@ rule model__catboost_simple:
 	log:
 		notebook = report(Remote("{bucket}/data/model_output/catboost_simple__{test_size}__{strategy}/model__catboost_simple.ipynb"),
 								category="logs")
+	threads: 8
 	params:
-		env="schiphol-py"
+		env="schiphol-py",
+		mlflow_experiment = config["mlflow"]["experiment"],
+		mlflow_uri = config["mlflow"]["tracking_uri"],
+		mlflow_run = "catboost_simple__{test_size}_{strategy}"
 	shell: 
 		"papermill {input.notebook} \"{log.notebook}\" "
 		"-k {params.env} --inject-paths "
 		"-p input_file \"{input.data}\" "
 		"-p train_test_file \"{input.train_test}\" "
-		"-p output_predictions \"{output.predictions}\""
+		"-p output_predictions \"{output.predictions}\" "
+		"-p mlflow_tracking_uri \"{params.mlflow_uri}\" "
+		"-p mlflow_experiment \"{params.mlflow_experiment}\" "
+		"-p mlflow_run \"{params.mlflow_run}\" "
+
+
+## TODO: HOW TO OUTPUT DIRECTORY TO REMOTE??? CAN'T USE DIRECTORY AS INPUT..
+### Currently broken because or irkernel + papermill bug
+rule r__raw_trelliscope:
+	input:
+		flights = Remote("{bucket}/data/raw/flights.csv"),
+		airports = Remote("{bucket}/data/raw/airports.csv"),
+		notebook = "scripts/r-explore__create_trelliscopes.ipynb"
+	output:
+		obj1 = Remote("{bucket}/{dir}/appfiles/displays/common/Delays_Type_Airline/displayObj.jsonp"),
+		obj2 = Remote("{bucket}/{dir}/appfiles/displays/common/Number_of_flights_per_day/displayObj.jsonp"),
+		# display1 = Remote(directory("{bucket}/{dir}/appfiles/displays/common/Delays_Type_Airline/")),        
+		# display2 = Remote(directory("{bucket}/{dir}/appfiles/displays/common/Number_of_flights_per_day/"))
+	log:
+		notebook = Remote("{bucket}/{dir}/r-explore__create_trelliscopes.ipynb")
+	params:
+		env = "schiphol-r",
+		trelliscope_path = config["trelliscope"]["path"]
+	shell: 
+		"conda activate {params.env} && "
+		"papermill {input.notebook} \"{log.notebook}\" "
+		"-k \"ir\" --inject-paths "
+		"-p input_flights \"{input.flights}\" "
+		"-p input_airports \"{input.airports}\" "
+		"-p output_path \"{wildcards.bucket}/{wildcards.dir}\" && "
+		"conda deactivate"
 
 
 ### Sphinx Docs ###
@@ -292,9 +335,7 @@ rule move_script_to_docs:
 rule make_docs:
 	input:
 		"docs/index.rst",
-		"docs/conf.py",
-		"docs/explore__pandas_profiling.ipynb",
-		"docs/model__catboost_simple.ipynb"
+		"docs/conf.py"
 	output:
 		"docs/_build/html/index.html",
 	shell:
