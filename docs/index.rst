@@ -24,7 +24,6 @@ Papermill scripts
 
 .. toctree::
    :maxdepth: 2
-   :titlesonly:
 
    environment_setup
    explore__pandas_profiling
