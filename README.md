@@ -7,6 +7,17 @@ Docs: https://schiphol-assignment.readthedocs.io/en/latest/
 
 Code assignment for Schiphol position
 
+## Approach to assignment 
+
+- C
+
+## Summary notebook
+
+- Links to output files
+- Link to MLFlow
+
+
+
 ## Environment setup
 
 For local development we use multiple conda environments because they play nice with `papermill` without having to deal with conflicts between packages as much.
