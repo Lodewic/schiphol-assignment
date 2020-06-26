@@ -12,24 +12,40 @@ os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = GS_CREDENTIALS
 GS = GSRemoteProvider(stay_on_remote=False, keep_local=True)
 
 def Remote(file, provider=GS):
+	"""Set `file` to remote `provider` if config['remote'] is true"""
 	if config['remote'] is True:
 		file = GS.remote(file)
 	return file
 
 def make_files_remote(files, provider=GS):
+	"""Set list of files to remotes"""
+
 	if isinstance(files, list):
-		remotes = [Remote(x) for x in files]
+		remotes = [Remote(x, provider=provider) for x in files]
 	else:
-		remotes = Remote(files)
+		remotes = Remote(files, provider=provider)
+	
 	return remotes
 
 
 def basename_noext(filename):
+	"""get filename without extension from filepath"""
 	base = os.path.basename(filename)
 	base_noext = os.path.splitext(base)[0]
 	return base_noext
 
-# TARGET FILES
+### Define target files ###
+# We have to create all the filenames that we want to create.
+# Snakemake will find out how to create files that don't exist, using the
+# rules defined further down below. Files will be created if,
+# - the file doesn't exist
+# - upstream files that are an input to the rule that creates the file are updated
+# - the timestamp of a file is more recent than the last Snakemake run, indicating
+# manual changes
+#
+# All files that are added to the 'all' rule will be created when calling
+# `snakemake --cores` from the cli.
+
 BUCKET = config['gcloud']['bucket']
 profiling_reports = expand("{bucket}/reports/profiling_reports/{table_name}.html",
 							bucket=BUCKET,
@@ -48,13 +64,14 @@ model_predictions = expand("{bucket}/data/model_output/{model}__{test_size}__{st
 							model = config['models'],
 							test_size = config['train_test']['test_size'],
 							strategy = config['train_test']['strategy'])
-
 model_predictions = make_files_remote(model_predictions)
+
+
 # the 'all' rule defines only the target files that you want to generate - as input the the 'all' rule
-## Comment out files that you want to ignore
+## Comment out files that you want to ignore or add those you want to create
 rule all:
     input:
-    	# profiling_reports,
+    	profiling_reports,
     	# Remote(f"{BUCKET}/data/model_input/features/route_destinations.csv"),
     	# Remote(f"{BUCKET}/data/model_input/delays_base_input.csv"),
     	# Remote(f"{BUCKET}/data/model_input/features/schedule_time_features.csv")
@@ -64,6 +81,7 @@ rule all:
     	Remote(f"{BUCKET}/data/model_input/features/rolling_mean_delay__10T__1D+1H+2H+6H.csv"),
     	"docs/_build/html/index.html"
 
+### Dummies for raw data check ###
 
 rule flights:
 	output:
@@ -73,6 +91,7 @@ rule airports:
 	output:
 		Remote(f"{BUCKET}/data/raw/airports.csv")
 
+### Data exploration
 
 rule create_pandas_profiling:
 	input:
@@ -92,6 +111,7 @@ rule create_pandas_profiling:
 		"-p input_file \"{input.data}\" "
 		"-p output_file \"{output.html_report}\" "
 
+### Create base model input ###
 
 rule preprocess__base_model_input:
 	input:
@@ -110,6 +130,7 @@ rule preprocess__base_model_input:
 		"-p input_file \"{input.data}\" "
 		"-p output_file \"{output.data}\" "
 
+### Features ###
 
 rule feature__route_destinations:
 	input:
@@ -215,6 +236,8 @@ rule train_test_split:
 		"-p strategy {wildcards.strategy} "
 
 
+### Prediction models ###
+
 rule model__baseline_average:
 	input:
 		data = Remote("{bucket}/data/model_input/delays_extended_input.csv"),
@@ -253,6 +276,9 @@ rule model__catboost_simple:
 		"-p input_file \"{input.data}\" "
 		"-p train_test_file \"{input.train_test}\" "
 		"-p output_predictions \"{output.predictions}\""
+
+
+### Sphinx Docs ###
 
 rule move_script_to_docs:
 	input:
