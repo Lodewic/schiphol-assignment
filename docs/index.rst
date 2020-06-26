@@ -15,6 +15,7 @@ Contents:
 
 .. toctree::
    :maxdepth: 3
+   :caption: Project info
 
    Summary
    scripts/environment_setup
@@ -26,15 +27,13 @@ Preprocessing scripts
 
 .. toctree::
    :maxdepth: 3
-   :caption: Papermill scripts
-
-   
+   :caption: Preprocessing scripts   
    
    scripts/preprocess__base_model_input
    scripts/preprocess__extend_base_with_features
    scripts/preprocess__train_test_split.ipynb
    
-Papermill scripts
+Feature scripts
 =================
 
 .. toctree::
@@ -47,7 +46,17 @@ Papermill scripts
    scripts/feature__holidays_from_RijksOverheid
    scripts/model__baseline_average
    scripts/model__catboost_simple
+
+Model scripts
+=================
+
+.. toctree::
+   :maxdepth: 3
+   :caption: Feature scripts
    
+   scripts/model__baseline_average
+   scripts/model__catboost_simple
+
    
     
 Indices and tables
