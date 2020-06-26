@@ -23,7 +23,7 @@ Contents:
     
 
 Preprocessing scripts
-=================
+=====================
 
 .. toctree::
    :maxdepth: 3
@@ -48,7 +48,7 @@ Feature scripts
    scripts/model__catboost_simple
 
 Model scripts
-=================
+=============
 
 .. toctree::
    :maxdepth: 3
