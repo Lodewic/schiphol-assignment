@@ -49,5 +49,5 @@ ENV PATH $PATH:/usr/local/gcloud/google-cloud-sdk/bin
 CMD /bin/bash -c "gcloud auth activate-service-account --key-file=/project/keys/bucket-access.json" && \
     /bin/bash -c "ls" && \
     /bin/bash -c "snakemake --dag | dot -Tsvg > /project/figures/dag.svg" && \
-    /bin/bash -c "snakemake -j" && \
+    /bin/bash -c "snakemake" && \
     /bin/bash -c "snakemake --report reports/report.html"
