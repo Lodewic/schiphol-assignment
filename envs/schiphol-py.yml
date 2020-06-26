@@ -17,9 +17,9 @@ dependencies:
   - ipykernel
   - pip
   - python-dotenv
-  - pandas-profiling
   - pip:
     - jupyter_contrib_nbextensions
+    - pandas-profiling>=2.6.0
     - tsfresh
     - catboost
     - xgboost
