@@ -12,6 +12,10 @@ dependencies:
   - ipykernel
   - gcsfs
   - crc32c
+  - sphinx
+  - nbconvert
+  - pandoc
+  - nbformat
   - pip
   - pip:
     - git+https://github.com/Lodewic/snakemake.git
@@ -20,4 +24,5 @@ dependencies:
     - networkx
     - jinja2 
     - pygments
+    - nbsphinx
     # - any_other_packages
