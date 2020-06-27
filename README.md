@@ -1,22 +1,13 @@
 Schiphol-Code-Assignment
 ==============================
 
+Project summary and results on readthedocs.
+
 Docs: https://schiphol-assignment.readthedocs.io/en/latest/
 
 [![Documentation Status](https://readthedocs.org/projects/schiphol-assignment/badge/?version=latest)](https://schiphol-assignment.readthedocs.io/en/latest/?badge=latest)
 
 Code assignment for Schiphol position
-
-## Approach to assignment 
-
-- C
-
-## Summary notebook
-
-- Links to output files
-- Link to MLFlow
-
-
 
 ## Local environment setup
 
@@ -53,6 +44,8 @@ conda deactivate
 
 The whole workflow is designed to work in a docker container so that we can deploy it on a larger machine in the future.
 This also allows us to test whether development on Windows caused any issues, which I can tell it definitely did.
+
+Look at the Dockerfile for the steps to setup your own local environment similarly.
 
 ### Build container
 
@@ -128,7 +121,7 @@ Project Organization
     │   ├───_build
     │   └───_static
     ├───envs
-    ├───keys
+    ├───keys               <- in .gitignore but save your credentials to mlflow and gcp here. Snakemake expects credentials at keys/bucket-access.json, ask Lodewic for keys.
     ├───lvt-schiphol-assignment-snakemake    <- Local sync of the cloud-storage bucket, in .gitignore but automatically created when running Snakemake
     │   ├───data
     │   │   ├───model_input
