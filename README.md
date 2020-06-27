@@ -114,45 +114,50 @@ gcloud iam service-accounts keys create keys/bucket-access.json --iam-account bu
 Project Organization
 ------------
 
-    ├── README.md          <- The top-level README for developers using this project.
-    ├── data
-    │   └── raw            <- The original, immutable data dump. If small enough included in version control.
-    │
-    ├── docs               <- A Sphinx project including nbsphinx to render notebooks; see sphinx-doc.org for details
-    │
-    ├── models             <- Trained and serialized models, model predictions, or model summaries
-    │
-    ├── notebooks          <- Jupyter notebooks. Naming convention is a number (for ordering),
-    │                         the creator's initials, and a short `-` delimited description, e.g.
-    │                         `1.0-jqp-initial-data-exploration`.
-    │
-    ├── references         <- Assignment pdf, data dictionaries, manuals, and all other explanatory materials.
-    │
-    ├── reports            <- Generated analysis as HTML, PDF, LaTeX, etc.
-    │   └── figures        <- Generated graphics and figures to be used in reporting
-    |
-    ├── src                <- Source code for use in this project.
-    │   ├── __init__.py    <- Makes src a Python module
-    │   │
-    │   ├── data           <- data utility functions
-    │   │   └── google_storage_io.py
-    │   │
-    │   ├── evaluation       <- Model performance evaluation utilities
-    │   │   ├── metrics.py
-    │   │   ├── predictions.py
-    │   │   └── regression.py
-    │   │
-    │   ├── models         <- Scripts to train models and then use trained models to make
-    │   │   │                 predictions
-    │   │   ├── predict_model.py
-    │   │   └── train_model.py
-    │   │
-    │   └── visualization  <- Scripts to create exploratory and results oriented visualizations
-    │       └── visualize.py
-    │
-    └── tox.ini            <- tox file with settings for running tox; see tox.readthedocs.io
 
+    ├── README.md          <- The top-level README for developers using this project.
+    ├───scripts            <- All papermill notebooks that serve as scripts, each with an associated rule in the Snakefile
+    ├───data               <- Local data folder in case cloud-storage not available. Only for local development use
+    │   ├───external
+    │   ├───interim
+    │   ├───processed
+    │   └───raw
+    ├───docs               <- Sphinx project iuncluding nbsphinx extension to include all notebooks under `/scripts`
+    │   ├───figures        <- static figures to include in documentation page
+    │   ├───scripts        <- Copy of `/scripts` with pre-rendered notebooks
+    │   ├───_build
+    │   └───_static
+    ├───envs
+    ├───keys
+    ├───lvt-schiphol-assignment-snakemake    <- Local sync of the cloud-storage bucket, in .gitignore but automatically created when running Snakemake
+    │   ├───data
+    │   │   ├───model_input
+    │   │   │   ├───features
+    │   │   │   └───targets
+    │   │   ├───model_output
+    │   │   │   ├───baseline_average__0.2__sample
+    │   │   │   ├───baseline_average__0.2__timeseries
+    │   │   │   ├───catboost_simple__0.2__sample
+    │   │   │   └───catboost_simple__0.2__timeseries
+    │   │   └───raw
+    │   ├───mlruns
+    │   ├───reports
+    │   │   └───profiling_reports
+    │   └───trelliscopes
+    │
+    │───models
+    ├───notebooks            <- Exploratory notebooks. These are not maintained nor expected to be runnable(!)
+    ├───references           <- Assignment pdf, data dictionaries, manuals, and all other explanatory materials.
+    ├───reports              <- Local reports as HTML, PDF, LaTeX, etc.
+    ├───src                  <- Source code for use in this project.
+    │   ├───data
+    │   ├───evaluation       <- Model performance evaluation utilities
+    │   ├───models
+    │   ├───pipelines
+    │   ├───transformers
+    │
+    ├───Snakefile            <- Snakemake pipeline definition including all rules and target files
+    ├───config.yaml          <- Snakemake config file to set cloud storage bucket and rule parameters
+    └── tox.ini              <- tox file with settings for running tox; see tox.readthedocs.io
 
 --------
-
-<p><small>Project based on the <a target="_blank" href="https://drivendata.github.io/cookiecutter-data-science/">cookiecutter data science project template</a>. #cookiecutterdatascience</small></p>
