@@ -23,9 +23,6 @@ Contents:
    script/r-explore__create_trelliscopes
     
 
-Preprocessing scripts
-=====================
-
 .. toctree::
    :maxdepth: 3
    :caption: Preprocessing scripts   
@@ -34,8 +31,7 @@ Preprocessing scripts
    scripts/preprocess__extend_base_with_features
    scripts/preprocess__train_test_split.ipynb
    
-Feature scripts
-=================
+
 
 .. toctree::
    :maxdepth: 3
@@ -45,15 +41,10 @@ Feature scripts
    scripts/feature__route_destinations
    scripts/feature__rolling_mean_delay
    scripts/feature__holidays_from_RijksOverheid
-   scripts/model__baseline_average
-   scripts/model__catboost_simple
-
-Model scripts
-=============
 
 .. toctree::
    :maxdepth: 3
-   :caption: Feature scripts
+   :caption: Model scripts
    
    scripts/model__baseline_average
    scripts/model__catboost_simple
