@@ -20,6 +20,7 @@ Contents:
    Summary
    scripts/environment_setup
    scripts/explore__pandas_profiling
+   script/r-explore__create_trelliscopes
     
 
 Preprocessing scripts
